@@ -1,0 +1,20 @@
+# Secret files — never commit these
+gcp-key.json
+.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Airflow logs
+logs/
