@@ -1,6 +1,7 @@
 # Secret files — never commit these
 gcp-key.json
 .env
+docker-comp
 
 # Python
 venv/
