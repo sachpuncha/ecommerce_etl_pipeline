@@ -23,23 +23,22 @@ with DAG(
     tags=["retail", "medallion"],
 ) as dag:
 
-    def run_load():
-        from load_to_bigquery import load_superstore_to_bronze
-        load_superstore_to_bronze()
+    def run_bronze():
+        from load_raw_to_bronze import load_raw_to_bronze
+        load_raw_to_bronze()
 
-    extract_load = PythonOperator(
+    def run_silver():
+        from clean_to_silver import clean_bronze_to_silver
+        clean_bronze_to_silver()
+
+    extract_load_bronze = PythonOperator(
         task_id="extract_load_to_bronze",
-        python_callable=run_load,
+        python_callable=run_bronze,
     )
 
-    dbt_bronze = BashOperator(
-        task_id="dbt_run_bronze",
-        bash_command="cd /opt/airflow/dbt_project && dbt run --select bronze",
-    )
-
-    dbt_silver = BashOperator(
-        task_id="dbt_run_silver",
-        bash_command="cd /opt/airflow/dbt_project && dbt run --select silver",
+    clean_load_silver = PythonOperator(
+        task_id="clean_load_to_silver",
+        python_callable=run_silver,
     )
 
     dbt_gold = BashOperator(
@@ -52,4 +51,4 @@ with DAG(
         bash_command="cd /opt/airflow/dbt_project && dbt test",
     )
 
-    extract_load >> dbt_bronze >> dbt_silver >> dbt_gold >> dbt_test
+    extract_load_bronze >> clean_load_silver >> dbt_gold >> dbt_test
