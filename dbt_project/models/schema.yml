@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Raw orders exactly as loaded from CSV, no transformations"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+
+  - name: int_orders_cleaned
+    description: "Cleaned and enriched orders — all business logic applied here"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_date
+        tests:
+          - not_null
+      - name: sales
+        tests:
+          - not_null
+      - name: profit_margin_pct
+        tests:
+          - not_null
+      - name: days_to_ship
+        tests:
+          - not_null
+
+  - name: dim_customers
+    description: "One row per customer with lifetime metrics"
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_products
+    description: "One row per product with performance metrics"
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_geography
+    description: "One row per unique city/state combination"
+    columns:
+      - name: city
+        tests:
+          - not_null
+      - name: state
+        tests:
+          - not_null
+
+  - name: fct_sales
+    description: "Fact table — one row per order line, star schema center"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+
+  - name: fct_profitability
+    description: "Pre-aggregated profitability metrics for dashboards"
+    columns:
+      - name: total_revenue
+        tests:
+          - not_null
